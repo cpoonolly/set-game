@@ -1,44 +1,20 @@
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { SetGame } from './SetGame';
 import './App.css';
 
 const App: React.FC = () => {
-  const [game, setGame] = useState<SetGame>(() => new SetGame(Date.now().toString()));
-  const [selectedCards, setSelectedCards] = useState<Set<string>>(new Set());
+  const game = useMemo(() => new SetGame(new Date().toISOString().split('T')[0]), []);
 
-  const handleCardClick = (card: string) => {
-    const newSelected = new Set(selectedCards);
-    
-    if (newSelected.has(card)) {
-      newSelected.delete(card);
-    } else {
-      newSelected.add(card);
-    }
+  const [tickCount, setTickCount] = useState<number>(0);
+  const tick = useCallback(() => setTickCount(prev => prev + 1), [setTickCount]);
 
-    setSelectedCards(newSelected);
+  const handleCardClick = useCallback((card: string) => {
+    game.selectCard(card);
+    tick();
+  }, [game, tickCount, tick]);
 
-    if (newSelected.size === 3) {
-      const newGame = new SetGame(game.board.cards.toString());
-      newGame.board = game.board;
-      newGame.foundSets = game.foundSets;
-      newGame.events = [...game.events];
-      newGame.startTime = game.startTime;
-      newGame.endTime = game.endTime;
-      newGame.currentSet = game.currentSet;
-
-      Array.from(newSelected).forEach(selectedCard => {
-        newGame.selectCard(selectedCard);
-      });
-
-      setGame(newGame);
-      setSelectedCards(new Set());
-    }
-  };
-
-  const handleNewGame = () => {
-    setGame(new SetGame(Date.now().toString()));
-    setSelectedCards(new Set());
-  };
+  const selectedCards = useMemo(() => game.currentSet, [game, tickCount]);
+  const lastEvent = useMemo(() => game.lastEvent, [game, tickCount]);
 
   return (
     <div className="app">
@@ -49,9 +25,6 @@ const App: React.FC = () => {
           <p>Sets Remaining: {game.setsRemainingCount}</p>
           {game.isComplete && <p className="complete">Game Complete! 🎉</p>}
         </div>
-        <button onClick={handleNewGame} className="new-game-btn">
-          New Game
-        </button>
       </header>
 
       <div className="game-board">
@@ -66,11 +39,11 @@ const App: React.FC = () => {
         ))}
       </div>
 
-      {game.lastEvent && (
+      {lastEvent && selectedCards.size === 0 && (
         <div className="last-event">
-          {game.lastEvent.type === 0 && <p className="success">Set found! ✓</p>}
-          {game.lastEvent.type === 1 && <p className="warning">Set already found!</p>}
-          {game.lastEvent.type === 2 && <p className="error">Invalid set! ✗</p>}
+          {lastEvent.type === 0 && <p className="success">Set found! ✓</p>}
+          {lastEvent.type === 1 && <p className="warning">Set already found!</p>}
+          {lastEvent.type === 2 && <p className="error">Invalid set! ✗</p>}
         </div>
       )}
     </div>

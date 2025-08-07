@@ -1,8 +1,7 @@
-import { Set } from 'immutable';
+import { Set, Map } from 'immutable';
 import seedrandom from 'seedrandom'
 
-function sampleSize<T>(array: T[], size: number, seed: string): T[] {
-    const randomGenerator = seedrandom(seed);
+function sampleSize<T>(array: T[], size: number, randomGenerator: () => number): T[] {
     const result: T[] = [];
     let indices = Set<number>();
     
@@ -17,7 +16,7 @@ function sampleSize<T>(array: T[], size: number, seed: string): T[] {
     return result;
 }
 
-export const BOARD_SIZE = 12;
+export const BOARD_SIZE = 16;
 export const SET_SIZE = 3;
 export const SET_COUNT = 6;
 
@@ -72,23 +71,26 @@ export const ALL_VALID_SETS: Set<Card>[] = [
 ];
 
 export function generateRandomBoard(numCards: number, numSets: number, seed: string): Board {
-    while (true) {
-        // console.log("Attempting to create board");
+    const randomGenerator = seedrandom(seed);
+    let attemptCount = 0;
 
-        const setsInBoard = sampleSize(ALL_VALID_SETS, numSets, seed);
+    while (true) {
+        console.log(`Generating random board (seed: ${seed}, attempt: ${attemptCount})`);
+
+        const setsInBoard = sampleSize(ALL_VALID_SETS, numSets, randomGenerator);
         let cardsInBoard = setsInBoard.reduce(
             (acc, validSet) => acc.union(validSet),
             Set<Card>()
         );
 
-        // console.log(` - setsInBoard: ${setsInBoard}`);
-        // console.log(` - cardsInBoard: ${cardsInBoard}`);
+        console.log(` - setsInBoard: ${setsInBoard}`);
+        console.log(` - cardsInBoard: ${cardsInBoard}`);
 
         for (let card of ALL_CARDS) {
-            if (cardsInBoard.size > numCards) break;
+            if (cardsInBoard.size >= numCards) break;
 
             if (cardsInBoard.has(card)) {
-                // console.log(` - skipping card (already in board): ${card}`);
+                console.log(` - skipping card (already in board): ${card}`);
                 continue;
             }
             
@@ -96,19 +98,24 @@ export function generateRandomBoard(numCards: number, numSets: number, seed: str
                 .some(set => set.has(card) && set.intersect(cardsInBoard).size > 2);
 
             if (cardFormsNewSet) {
-                // console.log(` - skipping card (forms a new set): ${card}`);
+                console.log(` - skipping card (forms a new set): ${card}`);
                 continue;
             }
 
             cardsInBoard = cardsInBoard.add(card);
-            // console.log(` - adding card: ${card}`);
+            console.log(` - adding card: ${card}`);
         }
 
-        if (cardsInBoard.size > numCards) {
+        if (cardsInBoard.size === numCards) {
             return {cards: cardsInBoard, sets: Set(setsInBoard)};
         }
 
-        // console.log(` - FAILED`);
+        console.log(` - ending boardSize: ${cardsInBoard.size} - trying again...`);
+        attemptCount++;
+
+        if (attemptCount > 1000) {
+            throw Error(`Failed to generate board after ${attemptCount} attemps`);
+        }
     }
 }
 
