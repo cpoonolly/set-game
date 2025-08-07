@@ -1,10 +1,21 @@
 import { Set } from 'immutable';
-import _lodash from 'lodash'
 import seedrandom from 'seedrandom'
 
-const dateString = new Date().toISOString().split('T')[0];
-seedrandom(dateString, { global: true });
-const _ = _lodash.runInContext();
+function sampleSize<T>(array: T[], size: number, seed: string): T[] {
+    const randomGenerator = seedrandom(seed);
+    const result: T[] = [];
+    let indices = Set<number>();
+    
+    while (result.length < size && result.length < array.length) {
+        const index = Math.floor(randomGenerator() * array.length);
+        if (!indices.has(index)) {
+            indices = indices.add(index);
+            result.push(array[index]);
+        }
+    }
+    
+    return result;
+}
 
 export const BOARD_SIZE = 12;
 export const SET_SIZE = 3;
@@ -28,7 +39,7 @@ export interface GameEvent {
     set?: Set<Card>;
 }
 
-export const allCards: Card[] = [
+export const ALL_CARDS: Card[] = [
     "baaa", "bcca", "bbab", "bcab", "bcbc", "acbb", "caba", "caca", "bcaa", "abcc", "cbab", "acbc", "abab",
     "aaaa", "bbac", "baca", "abcb", "cbca", "aabb", "ccab", "ccba", "bbca", "bcba", "caaa", "ccbc", "cbba",
     "aaac", "cbbc", "abbc", "accc", "ccca", "caab", "cabc", "bbbb", "cbcb", "babb", "aabc", "bbbc", "bacb",
@@ -38,7 +49,7 @@ export const allCards: Card[] = [
     "acca", "cbbb", "cacb"
 ];
 
-export const allValidSets: Set<Card>[] = [
+export const ALL_VALID_SETS: Set<Card>[] = [
     Set(["aabc", "bccb", "cbaa"]), Set(["accb", "cbab", "babb"]), Set(["bcaa", "cbba", "aaca"]), Set(["bcac", "abbc", "cacc"]),
     Set(["abcb", "bcab", "cabb"]), Set(["abab", "bcab", "caab"]), Set(["babc", "ccac", "abcc"]), Set(["caba", "bcab", "abcc"]),
     Set(["cbaa", "aaba", "bcca"]), Set(["aabc", "bcab", "cbca"]), Set(["acac", "caac", "bbac"]), Set(["baca", "abbc", "ccab"]),
@@ -60,11 +71,11 @@ export const allValidSets: Set<Card>[] = [
     Set(["cbaa", "bcba", "aaca"]), Set(["abbb", "bacb", "ccab"]), Set(["aabc", "cbab", "bcca"]), Set(["aabc", "bcaa", "cbcb"])
 ];
 
-export function generateRandomBoard(numCards: number, numSets: number): Board {
+export function generateRandomBoard(numCards: number, numSets: number, seed: string): Board {
     while (true) {
         console.log("Attempting to create board");
 
-        const setsInBoard = _.sampleSize(allValidSets, numSets);
+        const setsInBoard = sampleSize(ALL_VALID_SETS, numSets, seed);
         let cardsInBoard = setsInBoard.reduce(
             (acc, validSet) => acc.union(validSet),
             Set<Card>()
@@ -73,7 +84,7 @@ export function generateRandomBoard(numCards: number, numSets: number): Board {
         console.log(` - setsInBoard: ${setsInBoard}`);
         console.log(` - cardsInBoard: ${cardsInBoard}`);
 
-        for (let card of allCards) {
+        for (let card of ALL_CARDS) {
             if (cardsInBoard.size > numCards) break;
 
             if (cardsInBoard.has(card)) {
@@ -81,7 +92,7 @@ export function generateRandomBoard(numCards: number, numSets: number): Board {
                 continue;
             }
             
-            const cardFormsNewSet = allValidSets
+            const cardFormsNewSet = ALL_VALID_SETS
                 .some(set => set.has(card) && set.intersect(cardsInBoard).size > 2);
 
             if (cardFormsNewSet) {
@@ -109,8 +120,8 @@ export class SetGame {
     currentSet: Set<Card>;
     events: GameEvent[];
 
-    constructor() {
-        this.board = generateRandomBoard(BOARD_SIZE, SET_COUNT);
+    constructor(seed: string) {
+        this.board = generateRandomBoard(BOARD_SIZE, SET_COUNT, seed);
         this.startTime = new Date();
         this.endTime = null;
         this.foundSets = Set([]);
@@ -141,7 +152,7 @@ export class SetGame {
             this.events.push({type: GameEventType.SET_ALREADY_FOUND, set: this.currentSet});
         } else if (isValidSet) {
             this.events.push({type: GameEventType.SET_FOUND, set: this.currentSet});
-            this.foundSets.add(this.currentSet);
+            this.foundSets = this.foundSets.add(this.currentSet);
         } else {
             this.events.push({type: GameEventType.INVALID_SET, set: this.currentSet});
         }
