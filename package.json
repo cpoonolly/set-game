@@ -2,7 +2,7 @@
   "name": "setgame",
   "version": "1.0.0",
   "main": "index.js",
-  "homepage": "https://cpoonolly.github.io/setgame",
+  "homepage": "https://cpoonolly.github.io/set-game",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
