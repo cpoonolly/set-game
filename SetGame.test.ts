@@ -1,4 +1,4 @@
-import { SetGame, GameEventType, BOARD_SIZE, SET_COUNT } from './SetGame';
+import { SetGame, GameEventType, BOARD_SIZE, SET_COUNT } from './src/SetGame';
 import { Set } from 'immutable';
 
 describe('SetGame', () => {
