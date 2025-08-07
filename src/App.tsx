@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { SetGame } from './SetGame';
 import './App.css';
 
@@ -13,8 +13,24 @@ const App: React.FC = () => {
     tick();
   }, [game, tickCount, tick]);
 
+  useEffect(() => {
+    const timer = setInterval(tick, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   const selectedCards = useMemo(() => game.currentSet, [game, tickCount]);
   const lastEvent = useMemo(() => game.lastEvent, [game, tickCount]);
+  const elapsedSeconds = useMemo(() => {
+    const now = game.endTime || new Date();
+    return Math.floor((now.getTime() - game.startTime.getTime()) / 1000);
+  }, [game, tickCount]);
+
+  const formattedTime: string = useMemo(() => {
+    const mins = Math.floor(elapsedSeconds / 60);
+    const secs = elapsedSeconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }, [elapsedSeconds]);
 
   return (
     <div className="app">
@@ -23,6 +39,7 @@ const App: React.FC = () => {
         <div className="game-info">
           <p>Sets Found: {game.foundSets.size}/{game.board.sets.size}</p>
           <p>Sets Remaining: {game.setsRemainingCount}</p>
+          <p>Time: {formattedTime}</p>
           {game.isComplete && <p className="complete">Game Complete! 🎉</p>}
         </div>
       </header>
