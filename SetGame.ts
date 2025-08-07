@@ -73,7 +73,7 @@ export const ALL_VALID_SETS: Set<Card>[] = [
 
 export function generateRandomBoard(numCards: number, numSets: number, seed: string): Board {
     while (true) {
-        console.log("Attempting to create board");
+        // console.log("Attempting to create board");
 
         const setsInBoard = sampleSize(ALL_VALID_SETS, numSets, seed);
         let cardsInBoard = setsInBoard.reduce(
@@ -81,14 +81,14 @@ export function generateRandomBoard(numCards: number, numSets: number, seed: str
             Set<Card>()
         );
 
-        console.log(` - setsInBoard: ${setsInBoard}`);
-        console.log(` - cardsInBoard: ${cardsInBoard}`);
+        // console.log(` - setsInBoard: ${setsInBoard}`);
+        // console.log(` - cardsInBoard: ${cardsInBoard}`);
 
         for (let card of ALL_CARDS) {
             if (cardsInBoard.size > numCards) break;
 
             if (cardsInBoard.has(card)) {
-                console.log(` - skipping card (already in board): ${card}`);
+                // console.log(` - skipping card (already in board): ${card}`);
                 continue;
             }
             
@@ -96,19 +96,19 @@ export function generateRandomBoard(numCards: number, numSets: number, seed: str
                 .some(set => set.has(card) && set.intersect(cardsInBoard).size > 2);
 
             if (cardFormsNewSet) {
-                console.log(` - skipping card (forms a new set): ${card}`);
+                // console.log(` - skipping card (forms a new set): ${card}`);
                 continue;
             }
 
             cardsInBoard = cardsInBoard.add(card);
-            console.log(` - adding card: ${card}`);
+            // console.log(` - adding card: ${card}`);
         }
 
         if (cardsInBoard.size > numCards) {
             return {cards: cardsInBoard, sets: Set(setsInBoard)};
         }
 
-        console.log(` - FAILED`);
+        // console.log(` - FAILED`);
     }
 }
 
