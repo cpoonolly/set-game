@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { SetGame } from './SetGame';
+import Card from './Card';
 import './App.css';
 
 const App: React.FC = () => {
@@ -46,13 +47,12 @@ const App: React.FC = () => {
 
       <div className="game-board">
         {Array.from(game.board.cards).map(card => (
-          <div
+          <Card
             key={card}
-            className={`card ${selectedCards.has(card) ? 'selected' : ''}`}
+            card={card}
+            className={selectedCards.has(card) ? 'selected' : ''}
             onClick={() => handleCardClick(card)}
-          >
-            {card}
-          </div>
+          />
         ))}
       </div>
 
