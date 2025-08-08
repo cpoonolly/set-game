@@ -8,7 +8,7 @@
 
 import random
 from typing import Set
-from itertools import permutations, combinations
+from itertools import permutations, combinations, product
 
 
 num_props = 4
@@ -24,19 +24,27 @@ def generate_cards(prop: int):
         for val in prop_vals
     ]
 
-# this can just be hardcoded to:
-# ["baaa", "bcca", "bbab", "bcab", "bcbc", "acbb", "caba", "caca", "bcaa", "abcc", "cbab", "acbc", "abab", "aaaa", "bbac", "baca", "abcb", "cbca", "aabb", "ccab", "ccba", "bbca", "bcba", "caaa", "ccbc", "cbba", "aaac", "cbbc", "abbc", "accc", "ccca", "caab", "cabc", "bbbb", "cbcb", "babb", "aabc", "bbbc", "bacb", "bacc", "cbaa", "bcbb", "abba", "baac", "cccb", "ccaa", "abbb", "caac", "baab", "aacb", "cacc", "abaa", "bbcc", "acba", "abac", "baba", "aaab", "ccbb", "aaca", "aaba", "babc", "acac", "cbac", "cbcc", "cccc", "bbba", "abca", "bccb", "acaa", "bccc", "accb", "aacc", "bbaa", "cabb", "bbcb", "ccac", "bcac", "acab", "acca", "cbbb", "cacb"]
 all_cards = frozenset(generate_cards(num_props))
 
 prop_perms = list(list(perm) for perm in permutations(prop_vals))
 prop_perms.extend([[v] * len(prop_vals) for v in prop_vals])
 
-# this can just be hardcoded to:
-# [["aabc", "bccb", "cbaa"], ["accb", "cbab", "babb"], ["bcaa", "cbba", "aaca"], ["bcac", "abbc", "cacc"], ["abcb", "bcab", "cabb"], ["abab", "bcab", "caab"], ["babc", "ccac", "abcc"], ["caba", "bcab", "abcc"], ["cbaa", "aaba", "bcca"], ["aabc", "bcab", "cbca"], ["acac", "caac", "bbac"], ["baca", "abbc", "ccab"], ["bbbc", "acbc", "cabc"], ["caac", "bcbc", "abcc"], ["bcac", "caac", "abac"], ["caba", "acca", "bbaa"], ["aaab", "cbab", "bcab"], ["bbca", "caaa", "acba"], ["accc", "cbac", "babc"], ["aabc", "bcac", "cbcc"], ["bacb", "abbc", "ccaa"], ["ccab", "baba", "abcc"], ["cbab", "bcbb", "aacb"], ["abbc", "babc", "ccbc"], ["abca", "bcba", "caaa"], ["abbb", "bcab", "cacb"], ["acbb", "bbcb", "caab"], ["abab", "bccb", "cabb"], ["abab", "ccab", "baab"], ["caab", "abcb", "bcbb"], ["bcac", "cbac", "aaac"], ["aabc", "bcbc", "cbbc"], ["baac", "abcc", "ccbc"], ["bcac", "cbca", "aabb"], ["aabc", "babc", "cabc"], ["cbcb", "bcab", "aabb"], ["caba", "abca", "bcaa"], ["caba", "bcca", "abaa"], ["acac", "baac", "cbac"], ["bccb", "cbab", "aabb"], ["baac", "ccac", "abac"], ["abcb", "ccbb", "baab"], ["cbac", "aacc", "bcbc"], ["baaa", "ccba", "abca"], ["acca", "baba", "cbaa"], ["cbbc", "babc", "acbc"], ["accb", "cabb", "bbab"], ["bbab", "acab", "caab"], ["aabc", "bccc", "cbac"], ["bccc", "cabc", "abac"], ["baba", "abca", "ccaa"], ["abbc", "ccac", "bacc"], ["abba", "caca", "bcaa"], ["bcba", "caab", "abcc"], ["cabb", "acab", "bbcb"], ["cbab", "acab", "baab"], ["abbc", "bcab", "caca"], ["bcac", "cabc", "abcc"], ["acac", "bbcc", "cabc"], ["ccba", "abcc", "baab"], ["caac", "acbc", "bbcc"], ["bcab", "aacc", "cbba"], ["cbbc", "bcac", "aacc"], ["baca", "abba", "ccaa"], ["abbc", "bcbc", "cabc"], ["caba", "bbca", "acaa"], ["abcb", "ccab", "babb"], ["bcab", "aacb", "cbbb"], ["accc", "cabc", "bbac"], ["abbc", "bcaa", "cacb"], ["caba", "acab", "bbcc"], ["aaba", "bcaa", "cbca"], ["cbaa", "bcba", "aaca"], ["abbb", "bacb", "ccab"], ["aabc", "cbab", "bcca"], ["aabc", "bcaa", "cbcb"]]
-all_valid_sets = frozenset([
-    frozenset([''.join(valid_props) for valid_props in zip(*valid_prop_vals)])
-    for valid_prop_vals in combinations(prop_perms, num_props)
-])
+def is_valid_set(card1: str, card2: str, card3: str) -> bool:
+    return all(
+        a == b == c or (a != b and b != c and a != c)
+        for a, b, c in zip(card1, card2, card3)
+    )
+
+def find_all_valid_sets() -> frozenset:
+    all_variations = list(frozenset(variation) for variation in product(all_cards, repeat=3))
+    
+    return frozenset(
+        variation for variation in all_variations
+        if len(variation) == 3 and is_valid_set(*variation)
+    )
+
+# Generate all valid sets
+all_valid_sets = find_all_valid_sets()
 
 def get_valid_sets(board: Set[str]) -> Set[Set[str]]:
     return set([

@@ -68,6 +68,9 @@ export class SetGame {
         this.foundSets = Set([]);
         this.currentSet = Set([]);
         this.events = [];
+
+        console.log(`Valid Sets:`);
+        this.board.sets.toArray().forEach(set => console.log(` - ` + JSON.stringify(set)));
     }
 
     get setsRemainingCount() {
@@ -83,15 +86,15 @@ export class SetGame {
     }
 
     selectCard(card: Card) {
-        if (this.currentSet.size === SET_SIZE) {
-            this.currentSet = Set([]);
-        }
+        if (this.currentSet.size === SET_SIZE) this.currentSet = Set([]);
 
         this.currentSet = this.currentSet.add(card);
         if (this.currentSet.size !== SET_SIZE) return;
 
         const isFoundSet = this.foundSets.has(this.currentSet);
         const isValidSet = this.board.sets.has(this.currentSet);
+
+        console.log('currentSet', JSON.stringify(this.currentSet));
 
         if (isFoundSet) {
             this.events.push({type: GameEventType.SET_ALREADY_FOUND, set: this.currentSet});
