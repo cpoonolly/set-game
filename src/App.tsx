@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { SetGame } from './SetGame';
 import Card from './Card';
 import './App.css';
+import { SET_SIZE } from './constants';
 
 const App: React.FC = () => {
   const game = useMemo(() => new SetGame(new Date().toISOString().split('T')[0]), []);
@@ -56,7 +57,7 @@ const App: React.FC = () => {
         ))}
       </div>
 
-      {lastEvent && selectedCards.size === 0 && (
+      {lastEvent && selectedCards.size === SET_SIZE && (
         <div className="last-event">
           {lastEvent.type === 0 && <p className="success">Set found! ✓</p>}
           {lastEvent.type === 1 && <p className="warning">Set already found!</p>}

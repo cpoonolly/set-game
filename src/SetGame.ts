@@ -83,6 +83,10 @@ export class SetGame {
     }
 
     selectCard(card: Card) {
+        if (this.currentSet.size === SET_SIZE) {
+            this.currentSet = Set([]);
+        }
+
         this.currentSet = this.currentSet.add(card);
         if (this.currentSet.size !== SET_SIZE) return;
 
@@ -101,7 +105,5 @@ export class SetGame {
         if (this.isComplete) {
             this.endTime = new Date();
         }
-
-        this.currentSet = Set([]);
     }
 }
