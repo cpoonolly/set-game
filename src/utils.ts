@@ -1,4 +1,5 @@
 import { Set } from 'immutable';
+import { Card, CardProperties, Shape, Color, Fill, Count } from './types';
 
 export function sampleSize<T>(array: T[], size: number, randomGenerator: () => number): T[] {
     const result: T[] = [];
@@ -13,4 +14,19 @@ export function sampleSize<T>(array: T[], size: number, randomGenerator: () => n
     }
     
     return result;
+}
+
+export function getCardProperties(card: Card): CardProperties {
+    if (card.length !== 4) {
+        throw new Error(`Invalid card format: ${card}. Card must be exactly 4 characters.`);
+    }
+    
+    const [shapeChar, colorChar, fillChar, countChar] = card;
+    
+    return {
+        shape: shapeChar as Shape,
+        color: colorChar as Color,
+        fill: fillChar as Fill,
+        count: countChar as Count
+    };
 }
