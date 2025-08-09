@@ -21,7 +21,7 @@ export function generateRandomBoard(numCards: number, numSets: number, seed: str
     let attempts = 0;
     let card;
 
-    while (board.sets.size < numSets || board.cards.size < numCards) {
+    while (board.sets.size !== numSets || board.cards.size !== numCards) {
         console.log(`Generating random board (seed: ${seed}) - board: ${board})`);
 
         if (board.sets.size > numSets || board.cards.size > numCards) {
