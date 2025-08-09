@@ -5,8 +5,7 @@ import './App.css';
 import { SET_SIZE } from './constants';
 
 const App: React.FC = () => {
-  // const game = useMemo(() => new SetGame(new Date().toISOString().split('T')[0]), []);
-  const game = useMemo(() => new SetGame(new Date().toString()), []);
+  const game = useMemo(() => new SetGame(new Date().toISOString().split('T')[0]), []);
 
   const [tickCount, setTickCount] = useState<number>(0);
   const tick = useCallback(() => setTickCount(prev => prev + 1), [setTickCount]);
