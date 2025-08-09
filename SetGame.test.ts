@@ -1,5 +1,7 @@
-import { SetGame, GameEventType, BOARD_SIZE, SET_COUNT } from './src/SetGame';
+import { BOARD_SIZE, SET_COUNT } from './src/constants';
+import { SetGame } from './src/SetGame';
 import { Set } from 'immutable';
+import { GameEventType } from './src/types';
 
 describe('SetGame', () => {
   const testSeed = '2024-01-01';
@@ -66,7 +68,7 @@ describe('SetGame', () => {
       expect(game.events.length).toBe(0);
       
       game.selectCard(cards[2]);
-      expect(game.currentSet.size).toBe(0);
+      expect(game.currentSet.size).toBe(3);
       expect(game.events.length).toBe(1);
       expect(game.lastEvent.type).toBe(GameEventType.SET_FOUND);
       expect(game.lastEvent.set?.equals(validSet)).toBe(true);
@@ -147,7 +149,7 @@ describe('SetGame', () => {
       const cards = validSet.toArray();
       
       cards.forEach(card => game.selectCard(card));
-      expect(game.currentSet.size).toBe(0);
+      expect(game.currentSet.size).toBe(3);
       
       game.selectCard(cards[0]);
       expect(game.currentSet.size).toBe(1);

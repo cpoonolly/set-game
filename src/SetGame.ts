@@ -4,53 +4,47 @@ import { sampleSize } from './utils';
 import { BOARD_SIZE, SET_SIZE, SET_COUNT, ALL_CARDS, ALL_VALID_SETS } from './constants';
 import { Card, Board, GameEventType, GameEvent } from './types';
 
+function addCardToBoard(board: Board, card: Card): Board {
+    const newSets = ALL_VALID_SETS.filter(set => set.has(card) && set.intersect(board.cards).size === 2);
+    return {cards: board.cards.add(card), sets: board.sets.union(newSets)};
+};
+
+function removeCardFromBoard(board: Board, card: Card): Board {
+    const setsToRemove = board.sets.filter(set => set.contains(card));
+    return {cards: board.cards.remove(card), sets: board.sets.subtract(setsToRemove)};
+}
+
 export function generateRandomBoard(numCards: number, numSets: number, seed: string): Board {
     const randomGenerator = seedrandom(seed);
-    let attemptCount = 0;
+    const allCards: Set<Card> = Set(ALL_CARDS);
+    let board: Board = {cards: Set([]), sets: Set([])};
+    let attempts = 0;
+    let card;
 
-    while (true) {
-        console.log(`Generating random board (seed: ${seed}, attempt: ${attemptCount})`);
+    while (board.sets.size < numSets || board.cards.size < numCards) {
+        console.log(`Generating random board (seed: ${seed}) - board: ${board})`);
 
-        const setsInBoard = sampleSize(ALL_VALID_SETS, numSets, randomGenerator);
-        let cardsInBoard = setsInBoard.reduce(
-            (acc, validSet) => acc.union(validSet),
-            Set<Card>()
-        );
-
-        console.log(` - setsInBoard: ${setsInBoard}`);
-        console.log(` - cardsInBoard: ${cardsInBoard}`);
-
-        for (let card of ALL_CARDS) {
-            if (cardsInBoard.size >= numCards) break;
-
-            if (cardsInBoard.has(card)) {
-                console.log(` - skipping card (already in board): ${card}`);
-                continue;
+        if (board.sets.size > numSets || board.cards.size > numCards) {
+            card = sampleSize(board.cards.toArray(), 1, randomGenerator)[0];
+            board = removeCardFromBoard(board, card);
+        } else if (board.sets.size === numSets) {
+            card = allCards.subtract(board.cards).toArray().find(c => addCardToBoard(board, c).sets.size === numSets);
+            if (!card) {
+                card = sampleSize(board.cards.toArray(), 1, randomGenerator)[0];
+                board = removeCardFromBoard(board, card);
+            } else {
+                board = addCardToBoard(board, card);
             }
-            
-            const cardFormsNewSet = ALL_VALID_SETS
-                .some(set => set.has(card) && set.intersect(cardsInBoard).size > 2);
-
-            if (cardFormsNewSet) {
-                console.log(` - skipping card (forms a new set): ${card}`);
-                continue;
-            }
-
-            cardsInBoard = cardsInBoard.add(card);
-            console.log(` - adding card: ${card}`);
+        } else {
+            card = sampleSize(allCards.subtract(board.cards).toArray(), 1, randomGenerator)[0];
+            board = addCardToBoard(board, card);
         }
 
-        if (cardsInBoard.size === numCards) {
-            return {cards: cardsInBoard, sets: Set(setsInBoard)};
-        }
-
-        console.log(` - ending boardSize: ${cardsInBoard.size} - trying again...`);
-        attemptCount++;
-
-        if (attemptCount > 1000) {
-            throw Error(`Failed to generate board after ${attemptCount} attemps`);
-        }
+        attempts++;
+        if (attempts > 100000) throw new Error('Wow... who made this garbage');
     }
+
+    return board;
 }
 
 export class SetGame {

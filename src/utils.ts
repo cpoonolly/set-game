@@ -16,6 +16,18 @@ export function sampleSize<T>(array: T[], size: number, randomGenerator: () => n
     return result;
 }
 
+export function shuffle<T>(array: T[], randomGenerator: () => number): T[] {
+    const result = [...array]; // Create a copy to avoid mutating the original
+    
+    // Fisher-Yates shuffle algorithm
+    for (let i = result.length - 1; i > 0; i--) {
+        const j = Math.floor(randomGenerator() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+    }
+    
+    return result;
+}
+
 export function getCardProperties(card: Card): CardProperties {
     if (card.length !== 4) {
         throw new Error(`Invalid card format: ${card}. Card must be exactly 4 characters.`);
