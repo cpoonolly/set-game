@@ -1,18 +1,13 @@
 .app {
   text-align: center;
   padding: 20px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
 }
 
 .app-header {
   margin-bottom: 30px;
-}
-
-.app-header h1 {
-  color: #333;
-  margin-bottom: 20px;
 }
 
 .game-info {
@@ -28,12 +23,12 @@
 }
 
 .complete {
-  color: #4CAF50;
+  color: #4caf50;
   font-size: 1.2em;
 }
 
 .new-game-btn {
-  background-color: #2196F3;
+  background-color: #2196f3;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -44,7 +39,7 @@
 }
 
 .new-game-btn:hover {
-  background-color: #1976D2;
+  background-color: #1976d2;
 }
 
 .game-board {
@@ -56,7 +51,7 @@
   padding: 20px;
 }
 
-.card {
+/* .card {
   background: white;
   border: 2px solid #ddd;
   border-radius: 8px;
@@ -70,20 +65,7 @@
   align-items: center;
   justify-content: center;
   font-family: monospace;
-}
-
-.card:hover {
-  border-color: #2196F3;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.card.selected {
-  border-color: #FF9800;
-  background-color: #FFF3E0;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255,152,0,0.3);
-}
+} */
 
 .last-event {
   margin-top: 20px;
@@ -92,11 +74,11 @@
 }
 
 .success {
-  color: #4CAF50;
+  color: #4caf50;
 }
 
 .warning {
-  color: #FF9800;
+  color: #ff9800;
 }
 
 .error {

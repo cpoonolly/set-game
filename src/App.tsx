@@ -56,26 +56,31 @@ const App: React.FC = () => {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Set Card Game</h1>
+        <h1 className="text-3xl font-bold mt-8 mb-5">Set Card Game</h1>
         <div className="game-info">
           <p>
             Sets Found: {game.foundSets.size}/{game.board.sets.size}
           </p>
-          <p>Sets Remaining: {game.setsRemainingCount}</p>
           <p>Time: {formattedTime}</p>
           {game.isComplete && <p className="complete">Game Complete! 🎉</p>}
         </div>
       </header>
 
-      <div className="game-board">
-        {Array.from(game.board.cards).map((card) => (
-          <Card
-            key={card}
-            card={card}
-            className={selectedCards.has(card) ? "selected" : ""}
-            onClick={() => handleCardClick(card)}
-          />
-        ))}
+      <div className="flex flex-row gap-2">
+        <div className="game-board">
+          {Array.from(game.board.cards).map((card) => (
+            <Card
+              key={card}
+              card={card}
+              isSelected={selectedCards.has(card)}
+              onClick={() => handleCardClick(card)}
+            />
+          ))}
+        </div>
+
+        <FoundSets
+          sets={Array.from(game.foundSets).map((set) => set.toArray())}
+        />
       </div>
 
       {lastEvent && selectedCards.size === SET_SIZE && (
