@@ -8,7 +8,6 @@ import {
   Count,
 } from "./types";
 import { getCardProperties } from "./utils";
-import { read } from "fs";
 
 interface CardProps {
   card: CardType;
@@ -91,7 +90,7 @@ const Card: React.FC<CardProps> = ({
     <div
       className={`${
         readOnly
-          ? "bg-white flex items-center justify-center h-10 w-24"
+          ? "bg-white flex items-center justify-center h-16 w-24 m-0.5 border border-gray-300 rounded-sm"
           : `${DEFAULT_CARD_CLASSNAME} ${
               isSelected
                 ? "border-orange-400 bg-orange-50 shadow-md"

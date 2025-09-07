@@ -4,6 +4,7 @@ import Card from "./Card";
 import "./App.css";
 import { SET_SIZE } from "./constants";
 import { FoundSets } from "./FoundSets";
+import { GameBoard } from "./GameBoard";
 
 const App: React.FC = () => {
   const game = useMemo(
@@ -55,25 +56,17 @@ const App: React.FC = () => {
 
   return (
     <div className="app">
-      <header className="app-header">
+      <header className="mb-10">
         <h1 className="text-3xl font-bold mt-8 mb-5">Set Card Game</h1>
-        <div className="game-info">
-          <p>Time: {formattedTime}</p>
-          {game.isComplete && <p className="complete">Game Complete! 🎉</p>}
-        </div>
       </header>
 
-      <div className="flex flex-row gap-2">
-        <div className="game-board">
-          {Array.from(game.board.cards).map((card) => (
-            <Card
-              key={card}
-              card={card}
-              isSelected={selectedCards.has(card)}
-              onClick={() => handleCardClick(card)}
-            />
-          ))}
-        </div>
+      <div className="flex flex-row gap-x-16 mx-16 justify-around">
+        <GameBoard
+          formattedTime={formattedTime}
+          game={game}
+          selectedCards={selectedCards}
+          handleCardClick={handleCardClick}
+        />
 
         <FoundSets
           sets={Array.from(game.foundSets).map((set) => set.toArray())}

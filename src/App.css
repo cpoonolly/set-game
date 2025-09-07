@@ -6,40 +6,8 @@
     sans-serif;
 }
 
-.app-header {
-  margin-bottom: 30px;
-}
-
-.game-info {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  margin-bottom: 20px;
-  font-weight: bold;
-}
-
-.game-info p {
-  margin: 0;
-}
-
 .complete {
   color: #4caf50;
-  font-size: 1.2em;
-}
-
-.new-game-btn {
-  background-color: #2196f3;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.new-game-btn:hover {
-  background-color: #1976d2;
 }
 
 .game-board {
@@ -47,8 +15,6 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
 }
 
 .last-event {
