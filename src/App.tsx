@@ -4,6 +4,7 @@ import Card from "./Card";
 import "./App.css";
 import { SET_SIZE } from "./constants";
 import { FoundSets } from "./FoundSets";
+import { GameBoard } from "./GameBoard";
 
 const App: React.FC = () => {
   const game = useMemo(
@@ -55,27 +56,22 @@ const App: React.FC = () => {
 
   return (
     <div className="app">
-      <header className="app-header">
-        <h1>Set Card Game</h1>
-        <div className="game-info">
-          <p>
-            Sets Found: {game.foundSets.size}/{game.board.sets.size}
-          </p>
-          <p>Sets Remaining: {game.setsRemainingCount}</p>
-          <p>Time: {formattedTime}</p>
-          {game.isComplete && <p className="complete">Game Complete! 🎉</p>}
-        </div>
+      <header className="mb-10">
+        <h1 className="text-3xl font-bold mt-8 mb-5">Set Card Game</h1>
       </header>
 
-      <div className="game-board">
-        {Array.from(game.board.cards).map((card) => (
-          <Card
-            key={card}
-            card={card}
-            className={selectedCards.has(card) ? "selected" : ""}
-            onClick={() => handleCardClick(card)}
-          />
-        ))}
+      <div className="flex flex-row gap-x-16 mx-16 justify-around">
+        <GameBoard
+          formattedTime={formattedTime}
+          game={game}
+          selectedCards={selectedCards}
+          handleCardClick={handleCardClick}
+        />
+
+        <FoundSets
+          sets={Array.from(game.foundSets).map((set) => set.toArray())}
+          setCount={`(${game.foundSets.size}/${game.board.sets.size})`}
+        />
       </div>
 
       {lastEvent && selectedCards.size === SET_SIZE && (
