@@ -1,27 +1,27 @@
 import { FC } from "react";
-import Immutable from "immutable";
 import Card from "./Card";
 
 interface FoundSetsProps {
   sets: string[][];
+  setCount: string;
 }
 
-export const FoundSets: FC<FoundSetsProps> = ({ sets }) => {
+export const FoundSets: FC<FoundSetsProps> = ({ sets, setCount }) => {
   const [setOne, setTwo, setThree, setFour, setFive, setSix] = sets;
 
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="text-lg font-bold">Found Sets</h3>
+      <h3 className="text-lg font-bold">Found Sets {setCount}</h3>
 
       <table className="bg-white border border-gray-300">
         <tr className="border-b border-gray-300 h-16">
-          <td className="border-r border-gray-300 w-20">
+          <td className="border-r border-gray-300 w-24">
             {setOne && <Card card={setOne[0]} readOnly />}
           </td>
-          <td className="border-r border-gray-300 w-20">
+          <td className="border-r border-gray-300 w-24">
             {setOne && <Card card={setOne[1]} readOnly />}
           </td>
-          <td className="w-20">
+          <td className="w-24">
             {setOne && <Card card={setOne[2]} readOnly />}
           </td>
         </tr>

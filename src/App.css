@@ -51,22 +51,6 @@
   padding: 20px;
 }
 
-/* .card {
-  background: white;
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  padding: 20px;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: monospace;
-} */
-
 .last-event {
   margin-top: 20px;
   font-weight: bold;

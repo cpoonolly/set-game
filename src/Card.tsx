@@ -91,7 +91,7 @@ const Card: React.FC<CardProps> = ({
     <div
       className={`${
         readOnly
-          ? "bg-white flex items-center justify-center h-10"
+          ? "bg-white flex items-center justify-center h-10 w-24"
           : `${DEFAULT_CARD_CLASSNAME} ${
               isSelected
                 ? "border-orange-400 bg-orange-50 shadow-md"
@@ -101,7 +101,18 @@ const Card: React.FC<CardProps> = ({
       onClick={onClick}
     >
       {Array.from({ length: shapeCount }).map((_, index) => (
-        <div key={index} className={readOnly ? "scale-50" : ""}>
+        <div
+          key={index}
+          className={
+            readOnly
+              ? `scale-50 ${
+                  shapeCount === 3
+                    ? "first:-mr-5 last:-ml-5"
+                    : "first:-mr-2 last:-ml-2"
+                }`
+              : ""
+          }
+        >
           <Shape
             card={card}
             strokeColor={strokeColor}
