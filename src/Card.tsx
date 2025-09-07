@@ -5,12 +5,36 @@ import { getCardProperties } from './utils';
 
 interface CardProps {
     card: CardType;
+    variant?: "normal" | "small";
     className?: string;
     onClick?: () => void;
 }
 
-const Card: React.FC<CardProps> = ({ card, className = '', onClick }) => {
+const Card: React.FC<CardProps> = ({ 
+    card, 
+    variant = "normal", 
+    className = '', 
+    onClick 
+}) => {
     const properties = getCardProperties(card);
+    
+    // Define size configurations
+    const sizeConfig = {
+        normal: {
+            shapeWidth: 50,
+            shapeHeight: 100,
+            gap: '10px',
+            padding: '10px'
+        },
+        small: {
+            shapeWidth: 15,
+            shapeHeight: 30,
+            gap: '3px',
+            padding: '3px'
+        }
+    };
+    
+    const currentSize = sizeConfig[variant];
     
     // Map enum values to Shape component props
     const getShapeType = (shape: ShapeEnum): "Oval" | "Diamond" | "Rectangle" => {
@@ -67,8 +91,8 @@ const Card: React.FC<CardProps> = ({ card, className = '', onClick }) => {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                gap: '10px',
-                padding: '10px',
+                gap: currentSize.gap,
+                padding: currentSize.padding,
                 cursor: onClick ? 'pointer' : 'default'
             }}
         >
@@ -80,6 +104,8 @@ const Card: React.FC<CardProps> = ({ card, className = '', onClick }) => {
                     fillColor={fillColor}
                     isStriped={isStriped}
                     shape={shapeType}
+                    width={currentSize.shapeWidth}
+                    height={currentSize.shapeHeight}
                 />
             ))}
         </div>

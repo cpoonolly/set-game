@@ -3,7 +3,6 @@ import { SetGame } from "./SetGame";
 import Card from "./Card";
 import "./App.css";
 import { SET_SIZE } from "./constants";
-import { FoundSets } from "./FoundSets";
 
 const App: React.FC = () => {
   const game = useMemo(
