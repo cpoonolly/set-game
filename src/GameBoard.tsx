@@ -20,9 +20,9 @@ export const GameBoard: FC<GameBoardProps> = ({
     <div className="flex flex-col gap-y-7">
       <div className="flex flex-row justify-center items-center gap-x-8 font-bold text-lg">
         <p>Time: {formattedTime}</p>
-        {game.isComplete && <p className="complete">Game Complete! 🎉</p>}
+        {game.isComplete && <p className="text-green-600">Game Complete! 🎉</p>}
       </div>
-      <div className="game-board">
+      <div className="grid grid-cols-4 gap-2.5 max-w-4xl">
         {Array.from(game.board.cards).map((card) => (
           <Card
             key={card}

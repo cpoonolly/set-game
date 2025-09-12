@@ -1,4 +1,5 @@
 import React from "react";
+import clsx from "clsx";
 import Shape from "./Shape";
 import {
   Card as CardType,
@@ -84,33 +85,35 @@ const Card: React.FC<CardProps> = ({
   const shapeCount = getShapeCount(properties.count);
 
   const DEFAULT_CARD_CLASSNAME =
-    "border-2 rounded-md p-5 cursor-pointer transition-all duration-200 h-32 w-52 flex items-center justify-center gap-2 p-2";
+    "border-2 rounded-md p-5 cursor-pointer transition-all duration-200 h-32 w-52 gap-2 p-2";
+
+  const READ_ONLY_CARD_CLASSNAME = "h-16 w-24 m-0.5 rounded-sm";
 
   return (
     <div
-      className={`${
+      className={clsx(
+        "bg-white border border-gray-300 flex items-center justify-center",
         readOnly
-          ? "bg-white flex items-center justify-center h-16 w-24 m-0.5 border border-gray-300 rounded-sm"
-          : `${DEFAULT_CARD_CLASSNAME} ${
+          ? READ_ONLY_CARD_CLASSNAME
+          : [
+              DEFAULT_CARD_CLASSNAME,
               isSelected
-                ? "border-orange-400 bg-orange-50 shadow-md"
-                : "border-gray-300 bg-white hover:border-blue-500 hover:shadow-md"
-            }`
-      }`}
+                ? "border-orange-400 [&]:bg-orange-50 shadow-md"
+                : "hover:border-blue-500 hover:shadow-md",
+            ]
+      )}
       onClick={onClick}
     >
       {Array.from({ length: shapeCount }).map((_, index) => (
         <div
           key={index}
-          className={
-            readOnly
-              ? `scale-50 ${
-                  shapeCount === 3
-                    ? "first:-mr-5 last:-ml-5"
-                    : "first:-mr-2 last:-ml-2"
-                }`
-              : ""
-          }
+          className={clsx(
+            readOnly && {
+              "scale-50": true,
+              "first:-mr-5 last:-ml-5": shapeCount === 3,
+              "first:-mr-2 last:-ml-2": shapeCount !== 3,
+            }
+          )}
         >
           <Shape
             card={card}
