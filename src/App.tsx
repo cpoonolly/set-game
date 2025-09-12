@@ -53,12 +53,12 @@ const App: React.FC = () => {
   }, [elapsedSeconds]);
 
   return (
-    <div className="text-center p-5">
+    <div className="text-center p-2 xl:p-5">
       <header className="mb-10">
         <h1 className="text-3xl font-bold mt-8 mb-5">Set Card Game</h1>
       </header>
 
-      <div className="flex flex-row gap-x-16 mx-16 justify-around">
+      <div className="flex flex-col lg:flex-row gap-y-10 lg:gap-x-16 lg:mx-16 justify-around">
         <GameBoard
           formattedTime={formattedTime}
           game={game}

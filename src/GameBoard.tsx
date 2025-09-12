@@ -22,7 +22,7 @@ export const GameBoard: FC<GameBoardProps> = ({
         <p>Time: {formattedTime}</p>
         {game.isComplete && <p className="text-green-600">Game Complete! 🎉</p>}
       </div>
-      <div className="grid grid-cols-4 gap-2.5 max-w-4xl">
+      <div className="grid grid-cols-3 xl:grid-cols-4 gap-2.5 max-w-4xl justify-center items-center">
         {Array.from(game.board.cards).map((card) => (
           <Card
             key={card}
