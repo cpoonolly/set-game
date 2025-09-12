@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { SetGame } from "./SetGame";
-import Card from "./Card";
-import "./App.css";
 import { SET_SIZE } from "./constants";
 import { FoundSets } from "./FoundSets";
 import { GameBoard } from "./GameBoard";
@@ -55,7 +53,7 @@ const App: React.FC = () => {
   }, [elapsedSeconds]);
 
   return (
-    <div className="app">
+    <div className="text-center p-5">
       <header className="mb-10">
         <h1 className="text-3xl font-bold mt-8 mb-5">Set Card Game</h1>
       </header>
@@ -75,12 +73,16 @@ const App: React.FC = () => {
       </div>
 
       {lastEvent && selectedCards.size === SET_SIZE && (
-        <div className="last-event">
-          {lastEvent.type === 0 && <p className="success">Set found! ✓</p>}
-          {lastEvent.type === 1 && (
-            <p className="warning">Set already found!</p>
+        <div className="mt-5 font-bold text-lg">
+          {lastEvent.type === 0 && (
+            <p className="text-green-600">Set found! ✓</p>
           )}
-          {lastEvent.type === 2 && <p className="error">Invalid set! ✗</p>}
+          {lastEvent.type === 1 && (
+            <p className="text-amber-500">Set already found!</p>
+          )}
+          {lastEvent.type === 2 && (
+            <p className="text-red-600">Invalid set! ✗</p>
+          )}
         </div>
       )}
     </div>
