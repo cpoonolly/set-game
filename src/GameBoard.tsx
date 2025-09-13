@@ -33,6 +33,7 @@ export const GameBoard: FC<GameBoardProps> = ({
             card={card}
             isSelected={selectedCards.has(card)}
             onClick={() => handleCardClick(card)}
+            isGameComplete={game.isComplete}
           />
         ))}
       </div>

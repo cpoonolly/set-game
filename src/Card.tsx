@@ -15,6 +15,7 @@ interface CardProps {
   onClick?: () => void;
   isSelected?: boolean;
   readOnly?: boolean;
+  isGameComplete?: boolean;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -22,6 +23,7 @@ const Card: React.FC<CardProps> = ({
   onClick,
   isSelected = false,
   readOnly = false,
+  isGameComplete = false,
 }) => {
   const properties = getCardProperties(card);
 
@@ -85,7 +87,7 @@ const Card: React.FC<CardProps> = ({
   const shapeCount = getShapeCount(properties.count);
 
   const DEFAULT_CARD_CLASSNAME =
-    "border-2 rounded-md p-5 cursor-pointer transition-all duration-200 h-24 w-32 md:h-32 md:w-52 lg:gap-2 lg:p-2";
+    "border-2 rounded-md p-5 transition-all duration-200 h-24 w-32 md:h-32 md:w-52 lg:gap-2 lg:p-2";
 
   const READ_ONLY_CARD_CLASSNAME = "h-16 w-24 m-0.5 rounded-sm";
 
@@ -97,9 +99,10 @@ const Card: React.FC<CardProps> = ({
           ? READ_ONLY_CARD_CLASSNAME
           : [
               DEFAULT_CARD_CLASSNAME,
+              !isGameComplete && "cursor-pointer",
               isSelected
                 ? "border-orange-400 [&]:bg-orange-50 shadow-md"
-                : "hover:border-blue-500 hover:shadow-md",
+                : [!isGameComplete && "hover:border-blue-500 hover:shadow-md"],
             ]
       )}
       onClick={onClick}

@@ -14,7 +14,7 @@ export const FoundSets: FC<FoundSetsProps> = ({ sets, setCount }) => {
       <div className="flex flex-col items-center justify-center">
         {sets.length > 0 ? (
           sets.map((set, index) => (
-            <div key={index} className="flex flex-row">
+            <div key={index} className="flex flex-row gap-x-1">
               {set.map((card, index) => (
                 <Card key={index} card={card} readOnly />
               ))}
