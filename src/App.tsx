@@ -18,6 +18,8 @@ const App: React.FC = () => {
 
   const handleCardClick = useCallback(
     (card: string) => {
+      if (game.isComplete) return;
+
       game.selectCard(card);
       tick();
     },
@@ -41,6 +43,7 @@ const App: React.FC = () => {
 
   const selectedCards = useMemo(() => game.currentSet, [game, tickCount]);
   const lastEvent = useMemo(() => game.lastEvent, [game, tickCount]);
+
   const elapsedSeconds = useMemo(() => {
     const now = game.endTime || new Date();
     return Math.floor((now.getTime() - game.startTime.getTime()) / 1000);
@@ -53,17 +56,18 @@ const App: React.FC = () => {
   }, [elapsedSeconds]);
 
   return (
-    <div className="text-center p-5">
+    <div className="text-center p-2 xl:p-5">
       <header className="mb-10">
         <h1 className="text-3xl font-bold mt-8 mb-5">Set Card Game</h1>
       </header>
 
-      <div className="flex flex-row gap-x-16 mx-16 justify-around">
+      <div className="flex flex-col lg:flex-row gap-y-6 lg:gap-x-16 lg:mx-16 justify-around">
         <GameBoard
           formattedTime={formattedTime}
           game={game}
           selectedCards={selectedCards}
           handleCardClick={handleCardClick}
+          lastEvent={lastEvent}
         />
 
         <FoundSets
@@ -71,20 +75,6 @@ const App: React.FC = () => {
           setCount={`(${game.foundSets.size}/${game.board.sets.size})`}
         />
       </div>
-
-      {lastEvent && selectedCards.size === SET_SIZE && (
-        <div className="mt-5 font-bold text-lg">
-          {lastEvent.type === 0 && (
-            <p className="text-green-600">Set found! ✓</p>
-          )}
-          {lastEvent.type === 1 && (
-            <p className="text-amber-500">Set already found!</p>
-          )}
-          {lastEvent.type === 2 && (
-            <p className="text-red-600">Invalid set! ✗</p>
-          )}
-        </div>
-      )}
     </div>
   );
 };
