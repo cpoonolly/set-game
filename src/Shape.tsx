@@ -6,7 +6,7 @@ interface ShapeProps {
   strokeColor: string;
   fillColor: string;
   isStriped: boolean;
-  shape: "Oval" | "Diamond" | "Rectangle";
+  shape: "Oval" | "Diamond" | "Squiggle";
 }
 
 const Shape: React.FC<ShapeProps> = ({
@@ -43,13 +43,10 @@ const Shape: React.FC<ShapeProps> = ({
       ),
     },
     {
-      name: "Rectangle",
+      name: "Squiggle",
       element: (
-        <rect
-          x="10"
-          y="15"
-          width="30"
-          height="70"
+        <path
+          d="M 12 90 C 29.5 97, 48.6 78.8, 43.2 57.4 C 41 48.8, 33.6 40.8, 42.4 28.6 C 52.5 14.7, 46.6 11.3, 36 11 C 23.6 10.7, 10.8 22.3, 12.6 35.8 C 12.2 54.4, 25.2 56.5, 11.2 78.2 C 8 83.2, 5.5 87.7, 12 90 Z"
           fill={isStriped ? `url(#${card}_stripes)` : fillColor}
           stroke={strokeColor}
           strokeWidth="5"

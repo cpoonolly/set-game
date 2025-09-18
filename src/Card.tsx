@@ -28,10 +28,10 @@ const Card: React.FC<CardProps> = ({
   const properties = getCardProperties(card);
 
   // Map enum values to Shape component props
-  const getShapeType = (shape: ShapeEnum): "Oval" | "Diamond" | "Rectangle" => {
+  const getShapeType = (shape: ShapeEnum): "Oval" | "Diamond" | "Squiggle" => {
     switch (shape) {
-      case ShapeEnum.RECTANGLE:
-        return "Rectangle";
+      case ShapeEnum.SQUIGGLE:
+        return "Squiggle";
       case ShapeEnum.OVAL:
         return "Oval";
       case ShapeEnum.DIAMOND:
