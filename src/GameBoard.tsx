@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import Card from "./Card";
 import { SetGame } from "./SetGame";
 import { Card as CardType, GameEvent } from "./types";
@@ -19,11 +19,36 @@ export const GameBoard: FC<GameBoardProps> = ({
   handleCardClick,
   lastEvent,
 }) => {
+  const [showCopiedMessage, setShowCopiedMessage] = useState(false);
+
+  const handleShare = async () => {
+    try {
+      await game.copyShareableMessage();
+      setShowCopiedMessage(true);
+      setTimeout(() => setShowCopiedMessage(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy to clipboard:", err);
+    }
+  };
   return (
     <div className="flex flex-col gap-y-7">
       <div className="flex flex-row justify-center items-center gap-x-8 font-bold text-lg">
         <p>Time: {formattedTime}</p>
-        {game.isComplete && <p className="text-green-600">Game Complete! 🎉</p>}
+        {game.isComplete && (
+          <div className="flex items-center gap-x-4">
+            <p className="text-green-600">Game Complete! 🎉</p>
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                handleShare();
+              }}
+              className="text-blue-500 hover:text-blue-600 underline transition-colors cursor-pointer"
+            >
+              {showCopiedMessage ? "Copied! ✓" : "Share"}
+            </a>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-3 xl:grid-cols-4 gap-2.5 max-w-4xl justify-center items-center">

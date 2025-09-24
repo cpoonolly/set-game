@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { SetGame } from "./SetGame";
-import { SET_SIZE } from "./constants";
 import { FoundSets } from "./FoundSets";
 import { GameBoard } from "./GameBoard";
 
 const App: React.FC = () => {
-  const game = useMemo(
-    () => new SetGame(new Date().toISOString().split("T")[0]),
-    []
-  );
+  const game = useMemo(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const seed = urlParams.get('seed') || new Date().toISOString().split("T")[0];
+    return new SetGame(seed);
+  }, []);
 
   const [tickCount, setTickCount] = useState<number>(0);
   const tick = useCallback(
