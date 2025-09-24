@@ -139,4 +139,32 @@ export class SetGame {
       this.endTime = new Date();
     }
   }
+
+  getShareableMessage() {
+    if (!this.endTime) {
+      return "Set Game in progress...";
+    }
+
+    const totalTimeMs = this.endTime.getTime() - this.startTime.getTime();
+    const totalSeconds = Math.floor(totalTimeMs / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    const formattedTime = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+
+    const foundSetEvents = this.events.filter(e => e.type === GameEventType.SET_FOUND);
+    const setTimings = foundSetEvents.map((event, index) => {
+      const eventTime = this.startTime.getTime() + (index + 1) * (totalTimeMs / foundSetEvents.length);
+      const eventSeconds = Math.floor((eventTime - this.startTime.getTime()) / 1000);
+      const eventMins = Math.floor(eventSeconds / 60);
+      const eventSecs = eventSeconds % 60;
+      return `${eventMins}:${eventSecs.toString().padStart(2, "0")}`;
+    }).join(", ");
+
+    return ['🎯 Set Game Complete! 🎯', `⏱️ Time: ${formattedTime}`, `📈 Set Times: ${setTimings}`].join('\n');
+  }
+
+  async copyShareableMessage() {
+    const message = this.getShareableMessage();
+    await navigator.clipboard.writeText(message);
+  }
 }
