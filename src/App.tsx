@@ -61,7 +61,7 @@ const App: React.FC = () => {
         <h1 className="text-3xl font-bold mt-8 mb-5">Set Card Game</h1>
       </header>
 
-      <div className="flex flex-col lg:flex-row gap-y-6 lg:gap-x-16 lg:mx-16 justify-around">
+      <div className="flex flex-col lg:flex-row gap-y-6 lg:gap-x-12 lg:mx-12 justify-around">
         <GameBoard
           formattedTime={formattedTime}
           game={game}

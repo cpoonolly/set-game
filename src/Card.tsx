@@ -87,7 +87,7 @@ const Card: React.FC<CardProps> = ({
   const shapeCount = getShapeCount(properties.count);
 
   const DEFAULT_CARD_CLASSNAME =
-    "border-2 rounded-md p-5 transition-all duration-200 h-24 w-32 md:h-32 md:w-52";
+    "border-2 rounded-md transition-all duration-200 h-24 w-24 md:h-[125px] md:w-[175px] lg:w-[200px]";
 
   const READ_ONLY_CARD_CLASSNAME = "h-16 w-24 m-0.5 rounded-sm";
 
@@ -109,15 +109,20 @@ const Card: React.FC<CardProps> = ({
     >
       <div className="flex flex-row items-center justify-center w-full h-full gap-1">
         {Array.from({ length: shapeCount }).map((_, index) => (
-          <div key={index}>
+          <div
+            key={index}
+            className={clsx(
+              readOnly
+                ? "w-[25px] h-[50px]"
+                : "w-[25px] h-[50px] md:w-[50px] md:h-[100px]"
+            )}
+          >
             <Shape
               card={card}
               strokeColor={strokeColor}
               fillColor={fillColor}
               isStriped={isStriped}
               shape={shapeType}
-              width={readOnly ? 25 : 50}
-              height={readOnly ? 50 : 100}
             />
           </div>
         ))}
