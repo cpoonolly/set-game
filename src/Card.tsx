@@ -87,7 +87,7 @@ const Card: React.FC<CardProps> = ({
   const shapeCount = getShapeCount(properties.count);
 
   const DEFAULT_CARD_CLASSNAME =
-    "border-2 rounded-md p-5 transition-all duration-200 h-24 w-32 md:h-32 md:w-52 lg:gap-2 lg:p-2";
+    "border-2 rounded-md p-5 transition-all duration-200 h-24 w-32 md:h-32 md:w-52";
 
   const READ_ONLY_CARD_CLASSNAME = "h-16 w-24 m-0.5 rounded-sm";
 
@@ -107,34 +107,21 @@ const Card: React.FC<CardProps> = ({
       )}
       onClick={onClick}
     >
-      {Array.from({ length: shapeCount }).map((_, index) => (
-        <div
-          key={index}
-          className={clsx(
-            readOnly
-              ? [
-                  "scale-50",
-                  shapeCount === 3
-                    ? "first:-mr-5 last:-ml-5"
-                    : "first:-mr-2 last:-ml-2",
-                ]
-              : [
-                  "scale-75 md:scale-100",
-                  shapeCount === 3
-                    ? "first:-mr-2 last:-ml-2 md:first:mr-0 md:last:ml-0"
-                    : "md:first:mr-1 md:last:ml-1",
-                ]
-          )}
-        >
-          <Shape
-            card={card}
-            strokeColor={strokeColor}
-            fillColor={fillColor}
-            isStriped={isStriped}
-            shape={shapeType}
-          />
-        </div>
-      ))}
+      <div className="flex flex-row items-center justify-center w-full h-full gap-1">
+        {Array.from({ length: shapeCount }).map((_, index) => (
+          <div key={index}>
+            <Shape
+              card={card}
+              strokeColor={strokeColor}
+              fillColor={fillColor}
+              isStriped={isStriped}
+              shape={shapeType}
+              width={readOnly ? 25 : 50}
+              height={readOnly ? 50 : 100}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
