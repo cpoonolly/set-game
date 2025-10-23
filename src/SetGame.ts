@@ -124,14 +124,20 @@ export class SetGame {
       this.events.push({
         type: GameEventType.SET_ALREADY_FOUND,
         set: this.currentSet,
+        time: new Date()
       });
     } else if (isValidSet) {
-      this.events.push({ type: GameEventType.SET_FOUND, set: this.currentSet });
+      this.events.push({
+        type: GameEventType.SET_FOUND,
+        set: this.currentSet,
+        time: new Date()
+      });
       this.foundSets = this.foundSets.add(this.currentSet);
     } else {
       this.events.push({
         type: GameEventType.INVALID_SET,
         set: this.currentSet,
+        time: new Date()
       });
     }
 
@@ -153,7 +159,7 @@ export class SetGame {
 
     const foundSetEvents = this.events.filter(e => e.type === GameEventType.SET_FOUND);
     const setTimings = foundSetEvents.map((event, index) => {
-      const eventTime = this.startTime.getTime() + (index + 1) * (totalTimeMs / foundSetEvents.length);
+      const eventTime = event.time;
       const eventSeconds = Math.floor((eventTime - this.startTime.getTime()) / 1000);
       const eventMins = Math.floor(eventSeconds / 60);
       const eventSecs = eventSeconds % 60;
