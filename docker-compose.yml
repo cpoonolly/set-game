@@ -1,0 +1,13 @@
+services:
+  game:
+    container_name: set-game
+    build: .
+    image: cpoonolly/set-game
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    env_file:
+      - path: .env.docker
+        required: false
+    # volumes:
+    #   - "./config.ini:/app/config.ini"
