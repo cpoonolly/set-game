@@ -42,7 +42,7 @@ const App: React.FC = () => {
     setTimeout(() => {
       game.currentSet = game.currentSet.clear();
       tick();
-    }, 750);
+    }, 300);
   }, [game.lastEvent]);
 
   const selectedCards = useMemo(() => game.currentSet, [game, tickCount]);
