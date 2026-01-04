@@ -155,15 +155,18 @@ export class SetGame {
     const totalSeconds = Math.floor(totalTimeMs / 1000);
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
-    const formattedTime = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    const milliseconds = totalTimeMs % 1000;
+    const formattedTime = `${minutes}:${seconds.toString().padStart(2, "0")}.${milliseconds.toString().padStart(3, "0")}`;
 
     const foundSetEvents = this.events.filter(e => e.type === GameEventType.SET_FOUND);
     const setTimings = foundSetEvents.map((event, index) => {
       const eventTime = event.time;
-      const eventSeconds = Math.floor((eventTime - this.startTime.getTime()) / 1000);
+      const eventTimeMs = eventTime.getTime() - this.startTime.getTime();
+      const eventSeconds = Math.floor(eventTimeMs / 1000);
       const eventMins = Math.floor(eventSeconds / 60);
       const eventSecs = eventSeconds % 60;
-      return `${eventMins}:${eventSecs.toString().padStart(2, "0")}`;
+      const eventMs = eventTimeMs % 1000;
+      return `${eventMins}:${eventSecs.toString().padStart(2, "0")}.${eventMs.toString().padStart(3, "0")}`;
     }).join(", ");
 
     return ['🎯 Set Game Complete! 🎯', `⏱️ Time: ${formattedTime}`, `📈 Set Times: ${setTimings}`].join('\n');
