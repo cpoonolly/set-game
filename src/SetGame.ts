@@ -70,6 +70,7 @@ export function generateRandomBoard(
 }
 
 export class SetGame {
+  seed: string;
   board: Board;
   startTime: Date;
   endTime: Date | null;
@@ -78,6 +79,7 @@ export class SetGame {
   events: GameEvent[];
 
   constructor(seed: string) {
+    this.seed = seed;
     this.board = generateRandomBoard(BOARD_SIZE, SET_COUNT, seed);
     this.startTime = new Date();
     this.endTime = null;
@@ -184,20 +186,48 @@ export class SetGame {
   }
 
   onGameComplete() {
-    // first check if there's already a game stored for this.seed
-    // if so only save if this.totalTimeMs < SetGame.load(seed).totalTimeMs
+    const existingGame = SetGame.load(this.seed);
+
+    // If no existing game, or current game is faster, save it
+    if (!existingGame || !existingGame.totalTimeMs ||
+        (this.totalTimeMs && this.totalTimeMs < existingGame.totalTimeMs)) {
+      this.save();
+    }
   }
 
   save() {
-    // save events, startTime, & endTime for the game keyed on the game seed
+    const serializedEvents = this.events.map(event => ({
+      type: event.type,
+      set: event.set ? event.set.toArray() : undefined,
+      time: event.time.toISOString()
+    }));
+
+    const gameData = {
+      startTime: this.startTime.toISOString(),
+      endTime: this.endTime ? this.endTime.toISOString() : null,
+      events: serializedEvents
+    };
+
+    localStorage.setItem(`setgame_${this.seed}`, JSON.stringify(gameData));
   }
 
   static load(seed: string) {
+    const storedData = localStorage.getItem(`setgame_${seed}`);
+
+    if (!storedData) {
+      return null;
+    }
+
+    const gameData = JSON.parse(storedData);
     const game = new SetGame(seed);
-    // Set these fields from localStorage
-    game.startTime = new Date();
-    game.endTime = new Date();
-    game.events = []; 
+
+    game.startTime = new Date(gameData.startTime);
+    game.endTime = gameData.endTime ? new Date(gameData.endTime) : null;
+    game.events = gameData.events.map((event: any) => ({
+      type: event.type,
+      set: event.set ? Set(event.set) : undefined,
+      time: new Date(event.time)
+    }));
 
     return game;
   }
