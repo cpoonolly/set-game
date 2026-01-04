@@ -11,6 +11,23 @@ const App: React.FC = () => {
   const game = useMemo(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const seed = urlParams.get("seed") || gameDate.toISOString().split("T")[0];
+    const shouldLoad = urlParams.has("load");
+
+    // Update URL with seed param if not already present
+    if (!urlParams.has("seed")) {
+      urlParams.set("seed", seed);
+      const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+      window.history.replaceState({}, "", newUrl);
+    }
+
+    // Load saved game if load param is present
+    if (shouldLoad) {
+      const loadedGame = SetGame.load(seed);
+      if (loadedGame) {
+        return loadedGame;
+      }
+    }
+
     return new SetGame(seed);
   }, [gameDate]);
 
