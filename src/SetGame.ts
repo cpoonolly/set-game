@@ -202,10 +202,13 @@ export class SetGame {
       time: event.time.toISOString()
     }));
 
+    const serializedFoundSets = this.foundSets.toArray().map(set => set.toArray());
+
     const gameData = {
       startTime: this.startTime.toISOString(),
       endTime: this.endTime ? this.endTime.toISOString() : null,
-      events: serializedEvents
+      events: serializedEvents,
+      foundSets: serializedFoundSets
     };
 
     localStorage.setItem(`setgame_${this.seed}`, JSON.stringify(gameData));
@@ -228,6 +231,7 @@ export class SetGame {
       set: event.set ? Set(event.set) : undefined,
       time: new Date(event.time)
     }));
+    game.foundSets = Set(gameData.foundSets.map((setArray: Card[]) => Set(setArray)));
 
     return game;
   }
