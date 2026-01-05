@@ -62,6 +62,17 @@ const App: React.FC = () => {
     }, 300);
   }, [game.lastEvent]);
 
+  useEffect(() => {
+    if (game.isComplete) {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (!urlParams.has("load")) {
+        urlParams.set("load", "1");
+        const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+        window.history.replaceState({}, "", newUrl);
+      }
+    }
+  }, [game.isComplete]);
+
   const selectedCards = useMemo(() => game.currentSet, [game, tickCount]);
   const lastEvent = useMemo(() => game.lastEvent, [game, tickCount]);
 
