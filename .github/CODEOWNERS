@@ -1,2 +1,5 @@
-# Global code owner for the entire repository
-* @cpoonolly
+# Default owners for all files
+* @indi-rin @bisby @rileybutterfield @nicole026
+
+# Only cpoonolly can update the .github directory
+/.github/ @cpoonolly
