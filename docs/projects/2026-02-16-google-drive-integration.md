@@ -224,12 +224,24 @@ Create environment variable for Google Client ID:
 - Production: GitHub Pages environment settings or build-time variable
 - Access in code: `import.meta.env.VITE_GOOGLE_CLIENT_ID`
 
-### Step 3: TypeScript Definitions
-Create `src/types/google.d.ts` with types for:
-- Google Identity Services objects
+### Step 3: Install TypeScript Definitions
+Install the official TypeScript definitions for Google APIs:
+
+```bash
+npm install --save-dev @types/google.accounts @types/gapi.client.drive-v3
+```
+
+**Packages:**
+- `@types/google.accounts` - Type definitions for Google Identity Services (the new OAuth 2.0 library)
+- `@types/gapi.client.drive-v3` - Type definitions for Google Drive API v3
+
+These packages are maintained in the [DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped) repository and provide complete type coverage for:
+- Google Identity Services token client
 - Google Drive API responses
 - User info structure
 - Token response structure
+
+**Optional:** If you need additional custom types, create `src/types/google.d.ts` for app-specific type extensions.
 
 ### Step 4: Implement Services (Bottom-up)
 
