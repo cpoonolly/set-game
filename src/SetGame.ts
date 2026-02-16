@@ -70,6 +70,7 @@ export function generateRandomBoard(
 }
 
 export class SetGame {
+  seed: string;
   board: Board;
   startTime: Date;
   endTime: Date | null;
@@ -78,6 +79,7 @@ export class SetGame {
   events: GameEvent[];
 
   constructor(seed: string) {
+    this.seed = seed;
     this.board = generateRandomBoard(BOARD_SIZE, SET_COUNT, seed);
     this.startTime = new Date();
     this.endTime = null;
@@ -101,6 +103,14 @@ export class SetGame {
 
   get lastEvent() {
     return this.events[this.events.length - 1];
+  }
+
+  get totalTimeMs() {
+    if (!this.isComplete || !this.endTime) {
+      return null;
+    }
+
+    return this.endTime.getTime() - this.startTime.getTime();
   }
 
   selectCard(card: Card) {
@@ -143,15 +153,16 @@ export class SetGame {
 
     if (this.isComplete) {
       this.endTime = new Date();
+      this.onGameComplete();
     }
   }
 
   getShareableMessage() {
-    if (!this.endTime) {
+    const totalTimeMs = this.totalTimeMs;
+    if (!this.endTime || !totalTimeMs) {
       return "Set Game in progress...";
     }
 
-    const totalTimeMs = this.endTime.getTime() - this.startTime.getTime();
     const totalSeconds = Math.floor(totalTimeMs / 1000);
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
@@ -160,7 +171,7 @@ export class SetGame {
     const foundSetEvents = this.events.filter(e => e.type === GameEventType.SET_FOUND);
     const setTimings = foundSetEvents.map((event, index) => {
       const eventTime = event.time;
-      const eventSeconds = Math.floor((eventTime - this.startTime.getTime()) / 1000);
+      const eventSeconds = Math.floor((eventTime.getTime() - this.startTime.getTime()) / 1000);
       const eventMins = Math.floor(eventSeconds / 60);
       const eventSecs = eventSeconds % 60;
       return `${eventMins}:${eventSecs.toString().padStart(2, "0")}`;
@@ -172,5 +183,56 @@ export class SetGame {
   async copyShareableMessage() {
     const message = this.getShareableMessage();
     await navigator.clipboard.writeText(message);
+  }
+
+  onGameComplete() {
+    const existingGame = SetGame.load(this.seed);
+
+    // If no existing game, or current game is faster, save it
+    if (!existingGame || !existingGame.totalTimeMs ||
+        (this.totalTimeMs && this.totalTimeMs < existingGame.totalTimeMs)) {
+      this.save();
+    }
+  }
+
+  save() {
+    const serializedEvents = this.events.map(event => ({
+      type: event.type,
+      set: event.set ? event.set.toArray() : undefined,
+      time: event.time.toISOString()
+    }));
+
+    const serializedFoundSets = this.foundSets.toArray().map(set => set.toArray());
+
+    const gameData = {
+      startTime: this.startTime.toISOString(),
+      endTime: this.endTime ? this.endTime.toISOString() : null,
+      events: serializedEvents,
+      foundSets: serializedFoundSets
+    };
+
+    localStorage.setItem(`setgame_${this.seed}`, JSON.stringify(gameData));
+  }
+
+  static load(seed: string) {
+    const storedData = localStorage.getItem(`setgame_${seed}`);
+
+    if (!storedData) {
+      return null;
+    }
+
+    const gameData = JSON.parse(storedData);
+    const game = new SetGame(seed);
+
+    game.startTime = new Date(gameData.startTime);
+    game.endTime = gameData.endTime ? new Date(gameData.endTime) : null;
+    game.events = gameData.events.map((event: any) => ({
+      type: event.type,
+      set: event.set ? Set(event.set) : undefined,
+      time: new Date(event.time)
+    }));
+    game.foundSets = Set(gameData.foundSets.map((setArray: Card[]) => Set(setArray)));
+
+    return game;
   }
 }
