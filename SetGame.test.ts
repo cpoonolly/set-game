@@ -3,8 +3,32 @@ import { SetGame } from './src/SetGame';
 import { Set } from 'immutable';
 import { GameEventType } from './src/types';
 
+// Mock localStorage for Node.js test environment
+const localStorageMock = (() => {
+  let store: Record<string, string> = {};
+
+  return {
+    getItem: (key: string) => store[key] || null,
+    setItem: (key: string, value: string) => {
+      store[key] = value.toString();
+    },
+    removeItem: (key: string) => {
+      delete store[key];
+    },
+    clear: () => {
+      store = {};
+    }
+  };
+})();
+
+global.localStorage = localStorageMock as any;
+
 describe('SetGame', () => {
   const testSeed = '2024-01-01';
+
+  beforeEach(() => {
+    localStorage.clear();
+  });
 
   describe('deterministic behavior', () => {
     it('should generate the same board for the same seed', () => {
