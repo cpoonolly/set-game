@@ -158,11 +158,11 @@ describe('SetGame', () => {
     it('should handle selecting the same card multiple times in a set', () => {
       const game = new SetGame(testSeed);
       const card = game.board.cards.first()!;
-      
+
       game.selectCard(card);
       game.selectCard(card);
       game.selectCard(card);
-      
+
       expect(game.currentSet.size).toBe(1);
       expect(game.events.length).toBe(0);
     });
@@ -171,12 +171,107 @@ describe('SetGame', () => {
       const game = new SetGame(testSeed);
       const validSet = game.board.sets.first()!;
       const cards = validSet.toArray();
-      
+
       cards.forEach(card => game.selectCard(card));
       expect(game.currentSet.size).toBe(3);
-      
+
       game.selectCard(cards[0]);
       expect(game.currentSet.size).toBe(1);
+    });
+  });
+
+  describe('save and load', () => {
+    it('should save and load game state correctly', () => {
+      const game = new SetGame(testSeed);
+      const validSet = game.board.sets.first()!;
+      const cards = validSet.toArray();
+
+      // Play through a few sets
+      cards.forEach(card => game.selectCard(card));
+
+      const secondSet = game.board.sets.toArray()[1];
+      secondSet.forEach(card => game.selectCard(card));
+
+      // Save the game
+      game.save();
+
+      // Load the game
+      const loadedGame = SetGame.load(testSeed);
+
+      expect(loadedGame).not.toBeNull();
+      expect(loadedGame!.foundSets.size).toBe(game.foundSets.size);
+      expect(loadedGame!.foundSets.equals(game.foundSets)).toBe(true);
+      expect(loadedGame!.events.length).toBe(game.events.length);
+      expect(loadedGame!.startTime.getTime()).toBe(game.startTime.getTime());
+      expect(loadedGame!.endTime).toBe(game.endTime);
+    });
+
+    it('should return null when loading non-existent game', () => {
+      const loadedGame = SetGame.load('non-existent-seed');
+      expect(loadedGame).toBeNull();
+    });
+
+    it('should save completed game with end time', () => {
+      const game = new SetGame(testSeed);
+
+      // Complete the game
+      game.board.sets.forEach(validSet => {
+        validSet.forEach(card => game.selectCard(card));
+      });
+
+      expect(game.isComplete).toBe(true);
+      expect(game.endTime).not.toBeNull();
+
+      // Load the saved game (save happens automatically on completion)
+      const loadedGame = SetGame.load(testSeed);
+
+      expect(loadedGame).not.toBeNull();
+      expect(loadedGame!.isComplete).toBe(true);
+      expect(loadedGame!.endTime).not.toBeNull();
+      expect(loadedGame!.endTime!.getTime()).toBe(game.endTime!.getTime());
+      expect(loadedGame!.totalTimeMs).toBe(game.totalTimeMs);
+    });
+
+    it('should only save faster completion times', () => {
+      // Complete first game
+      const game1 = new SetGame(testSeed);
+      game1.startTime = new Date('2024-01-01T00:00:00Z');
+      game1.board.sets.forEach(validSet => {
+        validSet.forEach(card => game1.selectCard(card));
+      });
+      game1.endTime = new Date('2024-01-01T00:05:00Z'); // 5 minutes
+      game1.save();
+
+      const firstTime = game1.totalTimeMs;
+
+      // Complete second game with slower time
+      const game2 = new SetGame(testSeed);
+      game2.startTime = new Date('2024-01-01T00:00:00Z');
+      game2.board.sets.forEach(validSet => {
+        validSet.forEach(card => game2.selectCard(card));
+      });
+      game2.endTime = new Date('2024-01-01T00:10:00Z'); // 10 minutes
+
+      // Manually trigger onGameComplete to test the logic
+      game2.onGameComplete();
+
+      // Load and verify the faster time was kept
+      const loadedGame = SetGame.load(testSeed);
+      expect(loadedGame!.totalTimeMs).toBe(firstTime);
+
+      // Complete third game with faster time
+      const game3 = new SetGame(testSeed);
+      game3.startTime = new Date('2024-01-01T00:00:00Z');
+      game3.board.sets.forEach(validSet => {
+        validSet.forEach(card => game3.selectCard(card));
+      });
+      game3.endTime = new Date('2024-01-01T00:02:00Z'); // 2 minutes
+      game3.onGameComplete();
+
+      // Load and verify the new faster time was saved
+      const loadedGame2 = SetGame.load(testSeed);
+      expect(loadedGame2!.totalTimeMs).toBe(game3.totalTimeMs);
+      expect(loadedGame2!.totalTimeMs).toBeLessThan(firstTime!);
     });
   });
 
