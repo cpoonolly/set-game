@@ -1,23 +1,30 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Routes, Route, useNavigate, useSearchParams } from "react-router-dom";
 import { SetGame } from "./SetGame";
 import { FoundSets } from "./FoundSets";
 import { GameBoard } from "./GameBoard";
+import { AuthContextProvider } from "./contexts/AuthContext";
+import PastGamesPage from "./components/PastGamesPage";
 
-const App: React.FC = () => {
+const AppInner: React.FC = () => {
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const gameDate = useMemo(() => {
     return new Date();
   }, []);
 
   const game = useMemo(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const seed = urlParams.get("seed") || gameDate.toISOString().split("T")[0];
-    const shouldLoad = urlParams.has("load");
+    const seed = searchParams.get("seed") || gameDate.toISOString().split("T")[0];
+    const shouldLoad = searchParams.has("load");
 
     // Update URL with seed param if not already present
-    if (!urlParams.has("seed")) {
-      urlParams.set("seed", seed);
-      const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
-      window.history.replaceState({}, "", newUrl);
+    if (!searchParams.has("seed")) {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.set("seed", seed);
+        return next;
+      }, { replace: true });
     }
 
     // Load saved game if load param is present
@@ -64,11 +71,12 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (game.isComplete) {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (!urlParams.has("load")) {
-        urlParams.set("load", "1");
-        const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
-        window.history.replaceState({}, "", newUrl);
+      if (!searchParams.has("load")) {
+        setSearchParams((prev) => {
+          const next = new URLSearchParams(prev);
+          next.set("load", "1");
+          return next;
+        }, { replace: true });
       }
     }
   }, [game.isComplete]);
@@ -101,7 +109,17 @@ const App: React.FC = () => {
     <div className="text-center p-2 xl:p-5">
       <header className="mb-10">
         <h1 className="text-3xl font-bold mt-8 mb-2">Set Daily Card Game</h1>
-        <h2 className="text-xl font-medium mb-5">{formattedGameDate}</h2>
+        <h2 className="text-xl font-medium mb-3">{formattedGameDate}</h2>
+        <button
+          onClick={() => navigate("/history")}
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
+        >
+          <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+          Past Games
+        </button>
       </header>
 
       <div className="flex flex-col lg:flex-row gap-y-6 lg:gap-x-16 lg:mx-16 justify-around">
@@ -121,5 +139,14 @@ const App: React.FC = () => {
     </div>
   );
 };
+
+const App: React.FC = () => (
+  <AuthContextProvider>
+    <Routes>
+      <Route path="/" element={<AppInner />} />
+      <Route path="/history" element={<PastGamesPage />} />
+    </Routes>
+  </AuthContextProvider>
+);
 
 export default App;
