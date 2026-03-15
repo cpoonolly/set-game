@@ -2,8 +2,12 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { SetGame } from "./SetGame";
 import { FoundSets } from "./FoundSets";
 import { GameBoard } from "./GameBoard";
+import { AuthContextProvider, useAuth } from "./contexts/AuthContext";
+import LoginButton from "./components/LoginButton";
+import UserMenu from "./components/UserMenu";
 
-const App: React.FC = () => {
+const AppInner: React.FC = () => {
+  const { isAuthenticated } = useAuth();
   const gameDate = useMemo(() => {
     return new Date();
   }, []);
@@ -99,7 +103,10 @@ const App: React.FC = () => {
 
   return (
     <div className="text-center p-2 xl:p-5">
-      <header className="mb-10">
+      <header className="mb-10 relative">
+        <div className="absolute top-0 left-0 p-2">
+          {isAuthenticated ? <UserMenu /> : <LoginButton />}
+        </div>
         <h1 className="text-3xl font-bold mt-8 mb-2">Set Daily Card Game</h1>
         <h2 className="text-xl font-medium mb-5">{formattedGameDate}</h2>
       </header>
@@ -121,5 +128,11 @@ const App: React.FC = () => {
     </div>
   );
 };
+
+const App: React.FC = () => (
+  <AuthContextProvider>
+    <AppInner />
+  </AuthContextProvider>
+);
 
 export default App;

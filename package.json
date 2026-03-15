@@ -27,6 +27,8 @@
     "tailwindcss": "^4.1.12"
   },
   "devDependencies": {
+    "@types/gapi.client.drive-v3": "^0.0.5",
+    "@types/google.accounts": "^0.0.18",
     "@types/jest": "^30.0.0",
     "@types/lodash": "^4.17.20",
     "@types/node": "^24.2.0",
