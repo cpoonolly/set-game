@@ -10,7 +10,7 @@ export const GoogleAuthService = {
   initialize(clientId: string) {
     tokenClient = google.accounts.oauth2.initTokenClient({
       client_id: clientId,
-      scope: "https://www.googleapis.com/auth/drive.appdata",
+      scope: "https://www.googleapis.com/auth/drive.appdata openid profile email",
       callback: () => {},
     });
   },
