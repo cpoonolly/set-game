@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import Toast from "./Toast";
 
 const UserMenu: React.FC = () => {
-  const { user, isLoading, error, signOut, saveToGoogleDrive, loadFromGoogleDrive } = useAuth();
+  const { user, isLoading, signOut, saveToGoogleDrive, loadFromGoogleDrive } = useAuth();
   const [open, setOpen] = useState(false);
-  const [statusMsg, setStatusMsg] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; isError: boolean } | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -18,17 +19,15 @@ const UserMenu: React.FC = () => {
   }, []);
 
   const handleSave = async () => {
-    setStatusMsg(null);
-    await saveToGoogleDrive();
-    setStatusMsg(error ?? "Saved to Google Drive!");
     setOpen(false);
+    const msg = await saveToGoogleDrive();
+    setToast({ message: msg, isError: !msg.includes("!") });
   };
 
   const handleLoad = async () => {
-    setStatusMsg(null);
-    await loadFromGoogleDrive();
-    setStatusMsg(error ?? "Loaded from Google Drive!");
     setOpen(false);
+    const msg = await loadFromGoogleDrive();
+    setToast({ message: msg, isError: !msg.includes("!") });
   };
 
   const handleLogout = async () => {
@@ -38,10 +37,12 @@ const UserMenu: React.FC = () => {
 
   return (
     <div className="relative" ref={menuRef}>
-      {statusMsg && (
-        <div className="absolute -bottom-8 right-0 text-xs text-gray-600 whitespace-nowrap">
-          {statusMsg}
-        </div>
+      {toast && (
+        <Toast
+          message={toast.message}
+          isError={toast.isError}
+          onDismiss={() => setToast(null)}
+        />
       )}
       <button
         onClick={() => setOpen((prev) => !prev)}

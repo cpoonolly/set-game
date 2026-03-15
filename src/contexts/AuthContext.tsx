@@ -9,11 +9,10 @@ interface AuthContextValue {
   isAuthenticated: boolean;
   user: UserInfo | null;
   isLoading: boolean;
-  error: string | null;
   signIn: () => Promise<void>;
   signOut: () => Promise<void>;
-  saveToGoogleDrive: () => Promise<void>;
-  loadFromGoogleDrive: () => Promise<void>;
+  saveToGoogleDrive: () => Promise<string>;
+  loadFromGoogleDrive: () => Promise<string>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -22,7 +21,6 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [user, setUser] = useState<UserInfo | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [gsiReady, setGsiReady] = useState(false);
 
   useEffect(() => {
@@ -39,14 +37,13 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const signIn = useCallback(async () => {
     if (!gsiReady) return;
     setIsLoading(true);
-    setError(null);
     try {
       const { token: newToken, userInfo } = await GoogleAuthService.signIn();
       setToken(newToken);
       setUser(userInfo);
       localStorage.setItem(WAS_AUTHENTICATED_KEY, "1");
     } catch (err) {
-      setError("Sign in failed. Please try again.");
+      console.error("Sign in failed", err);
     } finally {
       setIsLoading(false);
     }
@@ -65,35 +62,33 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
   }, [token]);
 
-  const saveToGoogleDrive = useCallback(async () => {
-    if (!token) return;
+  const saveToGoogleDrive = useCallback(async (): Promise<string> => {
+    if (!token) return "Not signed in.";
     setIsLoading(true);
-    setError(null);
     try {
       await GoogleDriveService.saveAllGamesToDrive(token);
+      return "Saved to Google Drive!";
     } catch (err) {
       if (err instanceof Error && err.message === "NO_GAMES") {
-        setError("No saved games to upload.");
-      } else {
-        setError("Save failed. Please try again.");
+        return "No saved games to upload.";
       }
+      return "Save failed. Please try again.";
     } finally {
       setIsLoading(false);
     }
   }, [token]);
 
-  const loadFromGoogleDrive = useCallback(async () => {
-    if (!token) return;
+  const loadFromGoogleDrive = useCallback(async (): Promise<string> => {
+    if (!token) return "Not signed in.";
     setIsLoading(true);
-    setError(null);
     try {
       await GoogleDriveService.loadAllGamesFromDrive(token);
+      return "Loaded from Google Drive!";
     } catch (err) {
       if (err instanceof Error && err.message === "NO_DRIVE_DATA") {
-        setError("No saved games found on Google Drive.");
-      } else {
-        setError("Load failed. Please try again.");
+        return "No saved games found on Google Drive.";
       }
+      return "Load failed. Please try again.";
     } finally {
       setIsLoading(false);
     }
@@ -105,7 +100,6 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         isAuthenticated: !!token,
         user,
         isLoading,
-        error,
         signIn,
         signOut,
         saveToGoogleDrive,
