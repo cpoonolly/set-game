@@ -59,7 +59,7 @@ const UserMenu: React.FC = () => {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+        <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10">
           <button
             onClick={handleSave}
             disabled={isLoading}
