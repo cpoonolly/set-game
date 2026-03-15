@@ -46,7 +46,7 @@ const UserMenu: React.FC = () => {
       <button
         onClick={() => setOpen((prev) => !prev)}
         disabled={isLoading}
-        className="w-9 h-9 rounded-full overflow-hidden border-2 border-gray-300 hover:border-blue-400 disabled:opacity-50 focus:outline-none"
+        className="w-9 h-9 rounded-full overflow-hidden opacity-80 hover:opacity-100 disabled:opacity-40 focus:outline-none cursor-pointer disabled:cursor-not-allowed transition-opacity"
         title={user?.name}
       >
         {user?.picture ? (

@@ -103,12 +103,10 @@ const AppInner: React.FC = () => {
 
   return (
     <div className="text-center p-2 xl:p-5">
-      <header className="mb-10 relative">
-        <div className="absolute top-0 left-0 p-2">
-          {isAuthenticated ? <UserMenu /> : <LoginButton />}
-        </div>
+      <header className="mb-10">
         <h1 className="text-3xl font-bold mt-8 mb-2">Set Daily Card Game</h1>
-        <h2 className="text-xl font-medium mb-5">{formattedGameDate}</h2>
+        <h2 className="text-xl font-medium mb-3">{formattedGameDate}</h2>
+        {isAuthenticated ? <UserMenu /> : <LoginButton />}
       </header>
 
       <div className="flex flex-col lg:flex-row gap-y-6 lg:gap-x-16 lg:mx-16 justify-around">
