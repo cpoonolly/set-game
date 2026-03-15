@@ -9,8 +9,6 @@ interface AuthContextValue {
   isAuthenticated: boolean;
   user: UserInfo | null;
   isLoading: boolean;
-  signInError: string | null;
-  clearSignInError: () => void;
   signIn: () => Promise<void>;
   signOut: () => Promise<void>;
   saveToGoogleDrive: () => Promise<string>;
@@ -23,10 +21,7 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [user, setUser] = useState<UserInfo | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [signInError, setSignInError] = useState<string | null>(null);
   const [gsiReady, setGsiReady] = useState(false);
-
-  const clearSignInError = useCallback(() => setSignInError(null), []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -48,12 +43,7 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
       setUser(userInfo);
       localStorage.setItem(WAS_AUTHENTICATED_KEY, "1");
     } catch (err) {
-      const message = err instanceof Error ? err.message : "unknown";
-      if (message === "access_denied") {
-        setSignInError("Google sign-in is currently in closed beta. Reach out to the owner to be added.");
-      } else if (message !== "popup_closed_by_user") {
-        setSignInError("Sign-in failed. Please try again.");
-      }
+      console.error("Sign in failed", err);
     } finally {
       setIsLoading(false);
     }
@@ -110,8 +100,6 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         isAuthenticated: !!token,
         user,
         isLoading,
-        signInError,
-        clearSignInError,
         signIn,
         signOut,
         saveToGoogleDrive,
