@@ -275,24 +275,43 @@ describe('SetGame', () => {
     });
   });
 
+  const APRIL_FOOLS_BOARD_SIZE = 20;
+  const APRIL_FOOLS_SET_COUNT = 15;
+
   describe('multi-year board generation', () => {
     it('should generate valid boards for next five years from today', () => {
       const today = new Date('2025-08-09'); // Using today's date from env
-      
+
       // Test daily seeds for the next 5 years
       for (let year = 0; year < 1; year++) {
         for (let day = 0; day < 365; day++) {
           const testDate = new Date(today);
           testDate.setFullYear(today.getFullYear() + year);
           testDate.setDate(today.getDate() + day);
-          
+
           const seed = testDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+
+          // Skip April Fools - tested separately
+          if (seed.endsWith('04-01')) continue;
+
           const game = new SetGame(seed);
-          
+
           // Fail immediately if requirements aren't met
           expect(game.board.cards.size).toBe(BOARD_SIZE);
           expect(game.board.sets.size).toBe(SET_COUNT);
         }
+      }
+    });
+
+    it('should generate april fools boards for the next five april fools days', () => {
+      const startYear = new Date().getFullYear();
+
+      for (let i = 0; i < 5; i++) {
+        const seed = `${startYear + i}-04-01`;
+        const game = new SetGame(seed);
+
+        expect(game.board.cards.size).toBe(APRIL_FOOLS_BOARD_SIZE);
+        expect(game.board.sets.size).toBe(APRIL_FOOLS_SET_COUNT);
       }
     });
   });

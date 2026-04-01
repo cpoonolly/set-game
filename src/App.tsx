@@ -15,7 +15,7 @@ const AppInner: React.FC = () => {
   }, []);
 
   const game = useMemo(() => {
-    const seed = searchParams.get("seed") || gameDate.toISOString().split("T")[0];
+    const seed = searchParams.get("seed") || gameDate.toLocaleDateString('en-CA');
     const shouldLoad = searchParams.has("load");
 
     // Update URL with seed param if not already present
@@ -101,7 +101,6 @@ const AppInner: React.FC = () => {
       year: "numeric",
       month: "long",
       day: "numeric",
-      timeZone: "utc",
     }).format(gameDate);
   }, [gameDate]);
 

@@ -80,7 +80,10 @@ export class SetGame {
 
   constructor(seed: string) {
     this.seed = seed;
-    this.board = generateRandomBoard(BOARD_SIZE, SET_COUNT, seed);
+    const isAprilFools = seed.endsWith('04-01');
+    const boardSize = isAprilFools ? 20 : BOARD_SIZE;
+    const setCount = isAprilFools ? 15 : SET_COUNT;
+    this.board = generateRandomBoard(boardSize, setCount, seed);
     this.startTime = new Date();
     this.endTime = null;
     this.foundSets = Set([]);
