@@ -101,7 +101,6 @@ const AppInner: React.FC = () => {
       year: "numeric",
       month: "long",
       day: "numeric",
-      timeZone: "utc",
     }).format(gameDate);
   }, [gameDate]);
 
