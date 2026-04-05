@@ -1,17 +1,14 @@
 import React from "react";
 import clsx from "clsx";
 import Shape from "./Shape";
-import {
-  Card as CardType,
-  Shape as ShapeEnum,
-  Color,
-  Fill,
-  Count,
-} from "./types";
+import { Card as CardType, Fill, Count } from "./types";
 import { getCardProperties } from "./utils";
+import type { DateThemeId } from "./dateShapeTheme";
+import { resolveThemeColors } from "./cardColorThemes";
 
 interface CardProps {
   card: CardType;
+  dateThemeId: DateThemeId;
   onClick?: () => void;
   isSelected?: boolean;
   readOnly?: boolean;
@@ -20,50 +17,13 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({
   card,
+  dateThemeId,
   onClick,
   isSelected = false,
   readOnly = false,
   isGameComplete = false,
 }) => {
   const properties = getCardProperties(card);
-
-  // Map enum values to Shape component props
-  const getShapeType = (shape: ShapeEnum): "Oval" | "Diamond" | "Squiggle" => {
-    switch (shape) {
-      case ShapeEnum.SQUIGGLE:
-        return "Squiggle";
-      case ShapeEnum.OVAL:
-        return "Oval";
-      case ShapeEnum.DIAMOND:
-        return "Diamond";
-    }
-  };
-
-  const getStrokeColor = (color: Color): string => {
-    switch (color) {
-      case Color.GREEN:
-        return "#4CAF50";
-      case Color.RED:
-        return "#F44336";
-      case Color.PURPLE:
-        return "#9C27B0";
-    }
-  };
-
-  const getFillColor = (color: Color, fill: Fill): string => {
-    if (fill === Fill.EMPTY) {
-      return "white";
-    }
-    // For solid and striped, use the same base color
-    switch (color) {
-      case Color.GREEN:
-        return "#4CAF50";
-      case Color.RED:
-        return "#F44336";
-      case Color.PURPLE:
-        return "#9C27B0";
-    }
-  };
 
   const getIsStriped = (fill: Fill): boolean => {
     return fill === Fill.STRIPED;
@@ -80,9 +40,11 @@ const Card: React.FC<CardProps> = ({
     }
   };
 
-  const shapeType = getShapeType(properties.shape);
-  const strokeColor = getStrokeColor(properties.color);
-  const fillColor = getFillColor(properties.color, properties.fill);
+  const { strokeColor, fillColor } = resolveThemeColors(
+    dateThemeId,
+    properties.color,
+    properties.fill
+  );
   const isStriped = getIsStriped(properties.fill);
   const shapeCount = getShapeCount(properties.count);
 
@@ -131,7 +93,8 @@ const Card: React.FC<CardProps> = ({
             strokeColor={strokeColor}
             fillColor={fillColor}
             isStriped={isStriped}
-            shape={shapeType}
+            shape={properties.shape}
+            themeId={dateThemeId}
           />
         </div>
       ))}

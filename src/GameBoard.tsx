@@ -3,10 +3,12 @@ import Card from "./Card";
 import { SetGame } from "./SetGame";
 import { Card as CardType, GameEvent } from "./types";
 import { SET_SIZE } from "./constants";
+import type { DateThemeId } from "./dateShapeTheme";
 
 interface GameBoardProps {
   formattedTime: string;
   game: SetGame;
+  dateThemeId: DateThemeId;
   selectedCards: Immutable.Set<CardType>;
   handleCardClick: (card: CardType) => void;
   lastEvent: GameEvent;
@@ -15,6 +17,7 @@ interface GameBoardProps {
 export const GameBoard: FC<GameBoardProps> = ({
   formattedTime,
   game,
+  dateThemeId,
   selectedCards,
   handleCardClick,
   lastEvent,
@@ -56,6 +59,7 @@ export const GameBoard: FC<GameBoardProps> = ({
           <Card
             key={card}
             card={card}
+            dateThemeId={dateThemeId}
             isSelected={selectedCards.has(card)}
             onClick={() => handleCardClick(card)}
             isGameComplete={game.isComplete}
