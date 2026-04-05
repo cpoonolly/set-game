@@ -3,6 +3,7 @@ import { Routes, Route, useNavigate, useSearchParams } from "react-router-dom";
 import { SetGame } from "./SetGame";
 import { FoundSets } from "./FoundSets";
 import { GameBoard } from "./GameBoard";
+import { getDateThemeIdForSeed } from "./dateShapeTheme";
 import { AuthContextProvider } from "./contexts/AuthContext";
 import PastGamesPage from "./components/PastGamesPage";
 
@@ -104,6 +105,11 @@ const AppInner: React.FC = () => {
     }).format(gameDate);
   }, [gameDate]);
 
+  const dateThemeId = useMemo(
+    () => getDateThemeIdForSeed(game.seed),
+    [game.seed, tickCount]
+  );
+
   return (
     <div className="text-center p-2 xl:p-5">
       <header className="mb-10">
@@ -125,6 +131,7 @@ const AppInner: React.FC = () => {
         <GameBoard
           formattedTime={formattedTime}
           game={game}
+          dateThemeId={dateThemeId}
           selectedCards={selectedCards}
           handleCardClick={handleCardClick}
           lastEvent={lastEvent}
@@ -133,6 +140,7 @@ const AppInner: React.FC = () => {
         <FoundSets
           sets={Array.from(game.foundSets).map((set) => set.toArray())}
           setCount={`(${game.foundSets.size}/${game.board.sets.size})`}
+          dateThemeId={dateThemeId}
         />
       </div>
     </div>

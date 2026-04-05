@@ -9,9 +9,9 @@ export enum Shape {
 }
 
 export enum Color {
-  GREEN = "a",
-  RED = "b",
-  PURPLE = "c",
+  ONE = "a",
+  TWO = "b",
+  THREE = "c",
 }
 
 export enum Fill {
